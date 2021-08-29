@@ -1,0 +1,9 @@
+.ImageGalleryItem {
+  list-style: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.ImageGalleryItem:hover {
+  background-color: rgb(239, 240, 167);
+}

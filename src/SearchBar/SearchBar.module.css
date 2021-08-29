@@ -1,0 +1,30 @@
+.SearchBar {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  background-color: #4354b0;
+}
+
+.SearchForm {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+}
+
+.SearchFormButton {
+  position: absolute;
+  border: none;
+  background: none;
+  top: 2px;
+  cursor: pointer;
+}
+
+.SearchFormInput {
+  padding-left: 30px;
+  height: 24px;
+  width: 100%;
+  max-width: 200px;
+}

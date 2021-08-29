@@ -1,19 +1,17 @@
 import { MouseEventHandler } from "react";
 import { AppState } from "../App";
 import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
-import "./ImageGallery.css";
+import css from "./ImageGallery.module.css";
 
-const handleClick: MouseEventHandler = (e) => {
-  const id = (e.target as HTMLElement).id;
-  if (!id) return;
-  console.log(id);
-};
+interface GalleryData extends AppState {
+  onClick: MouseEventHandler;
+}
 
-const ImageGallery = (r: AppState) => {
+const ImageGallery = ({ hits, onClick }: GalleryData) => {
   return (
-    <ul className="ImageGallery" onClick={handleClick}>
-      {r.hits.map((p, i) => (
-        <ImageGalleryItem {...p} key={i} />
+    <ul className={css.ImageGallery} onClick={onClick}>
+      {hits.map((picData, i) => (
+        <ImageGalleryItem {...picData} index={i} key={i} />
       ))}
     </ul>
   );

@@ -40,7 +40,7 @@ export default async function getPics(
   const f = await fetch(
     `https://pixabay.com/api/?image_type=photo&orientation=${orientation}&q=${query}&page=${page}&per_page=${per_page}&key=${key}`
   );
-  if (!f.ok) throw new Error("Invalid data!");
+  if (!f.ok) throw new Error(`Error ${f.status}: ${f.statusText}`);
   const data = await f.json();
   return data;
 }

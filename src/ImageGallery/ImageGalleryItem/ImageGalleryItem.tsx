@@ -1,16 +1,19 @@
 import { PicData } from "../../getPics";
-import "./ImageGalleryItem.css";
+import css from "./ImageGalleryItem.module.css";
 
-const ImageGalleryItem = (p: PicData) => {
+interface GalleryItemData extends PicData {
+  index: number;
+}
+
+const ImageGalleryItem = (p: GalleryItemData) => {
   return (
-    <li className="ImageGalleryItem">
+    <li className={css.ImageGalleryItem} data-index={p.index}>
       <img
         src={p.previewURL}
         alt={p.tags}
         width={p.previewWidth}
         height={p.previewHeight}
-        className="ImageGalleryItem-image"
-        id={p.id.toString()}
+        className={css.ImageGalleryItemImage}
       />
     </li>
   );

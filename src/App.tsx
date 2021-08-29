@@ -1,4 +1,4 @@
-import React from "react";
+import { Component, MouseEventHandler } from "react";
 import getPics, { PicData, PixResponse } from "./getPics";
 import { pixabay } from "./config.json";
 
@@ -6,17 +6,17 @@ import SearchBar from "./SearchBar/SearchBar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import Loader from "./Loader/Loader";
 import Button from "./Button/Button";
-
-import "./App.css";
+import Modal from "./Modal/Modal";
 
 export interface AppState extends PixResponse {
   query: string;
   page: number;
   pageCount: number;
   loading: boolean;
+  modalIndex: number;
 }
 
-class App extends React.Component<{}, AppState> {
+class App extends Component<{}, AppState> {
   state = {
     total: 0,
     totalHits: 0,
@@ -25,48 +25,91 @@ class App extends React.Component<{}, AppState> {
     page: 1,
     pageCount: 1,
     loading: false,
+    modalIndex: -1,
   };
+  allowScroll = false;
+
+  componentDidMount() {
+    document.addEventListener("keydown", (e) => {
+      if (this.state.modalIndex < 0) return;
+      if (e.code === "Space" || e.code === "Escape")
+        this.setState({ modalIndex: -1 });
+    });
+  }
 
   handleSubmit = async (value: string) => {
-    this.setState({ loading: true });
-    const data = (await getPics(value)) as AppState;
-    data.query = value;
-    data.page = 1;
-    data.pageCount = Math.ceil(data.total / pixabay.per_page);
-    data.loading = false;
-    this.setState(data);
+    try {
+      this.setState({ loading: true });
+      const data = (await getPics(value)) as AppState;
+      data.query = value;
+      data.page = 1;
+      data.pageCount = Math.ceil(data.total / pixabay.per_page);
+      data.loading = false;
+      this.allowScroll = true;
+      this.setState(data);
+    } catch (error) {
+      this.handleError(error as Error);
+    }
+  };
+
+  handleGalleryClick: MouseEventHandler = (e) => {
+    const li = (e.target as HTMLElement).closest("li");
+    if (!li) return;
+    this.setState({ modalIndex: Number(li.dataset.index) });
   };
 
   handleLoadMore = async () => {
-    const currentState = this.state;
-    this.setState({ loading: true });
-    const data = (await getPics(
-      currentState.query,
-      ++currentState.page
-    )) as AppState;
-    currentState.hits.push(...data.hits);
-    currentState.loading = false;
-    this.setState(currentState);
+    try {
+      const currentState = this.state;
+      this.setState({ loading: true });
+      const data = (await getPics(
+        currentState.query,
+        ++currentState.page
+      )) as AppState;
+      currentState.hits.push(...data.hits);
+      currentState.loading = false;
+      this.allowScroll = true;
+      this.setState(currentState);
+    } catch (error) {
+      this.handleError(error as Error);
+    }
   };
+
+  handleModalClose = () => {
+    this.setState({ modalIndex: -1 });
+  };
+
+  handleError(error: Error) {
+    alert(error.message);
+    this.setState((prev) => ({ loading: false, pageCount: prev.page }));
+  }
+
+  componentDidUpdate() {
+    if (!this.allowScroll) return;
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+    this.allowScroll = false;
+  }
 
   render() {
     return (
       <>
         <SearchBar onSubmit={this.handleSubmit} />
-        <ImageGallery {...this.state} />
+        <ImageGallery {...this.state} onClick={this.handleGalleryClick} />
         {this.state.loading && <Loader />}
         {this.state.page < this.state.pageCount && (
           <Button onClick={this.handleLoadMore} />
         )}
+        {this.state.modalIndex > -1 && (
+          <Modal
+            {...this.state.hits[this.state.modalIndex]}
+            onClose={this.handleModalClose}
+          />
+        )}
       </>
     );
-  }
-
-  componentDidUpdate() {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
   }
 }
 

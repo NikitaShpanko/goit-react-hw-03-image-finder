@@ -1,0 +1,13 @@
+.Button {
+  display: block;
+  margin: 0 auto 10px;
+  color: #ffffff;
+  background-color: #4354b0;
+  cursor: pointer;
+}
+
+.Button:hover,
+.Button:focus {
+  color: #4354b0;
+  background-color: #ffffff;
+}
