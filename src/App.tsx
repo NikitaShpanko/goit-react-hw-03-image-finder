@@ -1,10 +1,10 @@
 import { Component, MouseEventHandler } from "react";
+import Loader from "react-loader-spinner";
 import getPics, { PicData, PixResponse } from "./getPics";
 import { pixabay } from "./config.json";
 
 import SearchBar from "./SearchBar/SearchBar";
 import ImageGallery from "./ImageGallery/ImageGallery";
-import Loader from "./Loader/Loader";
 import Button from "./Button/Button";
 import Modal from "./Modal/Modal";
 
@@ -32,8 +32,7 @@ class App extends Component<{}, AppState> {
   componentDidMount() {
     document.addEventListener("keydown", (e) => {
       if (this.state.modalIndex < 0) return;
-      if (e.code === "Space" || e.code === "Escape")
-        this.setState({ modalIndex: -1 });
+      if (e.code === "Escape") this.setState({ modalIndex: -1 });
     });
   }
 
@@ -98,7 +97,9 @@ class App extends Component<{}, AppState> {
       <>
         <SearchBar onSubmit={this.handleSubmit} />
         <ImageGallery {...this.state} onClick={this.handleGalleryClick} />
-        {this.state.loading && <Loader />}
+        {this.state.loading && (
+          <Loader type="Oval" color="#4354b0" width="50px" height="50px" />
+        )}
         {this.state.page < this.state.pageCount && (
           <Button onClick={this.handleLoadMore} />
         )}
