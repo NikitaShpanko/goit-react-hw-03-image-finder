@@ -1,0 +1,4 @@
+.ImageGallery {
+  display: flex;
+  flex-wrap: wrap;
+}

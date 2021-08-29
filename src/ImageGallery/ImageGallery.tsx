@@ -1,18 +1,21 @@
+import { MouseEventHandler } from "react";
 import { AppState } from "../App";
-import Loader from "../Loader/Loader";
 import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
+import "./ImageGallery.css";
 
-const ImageGallery = (r: AppState | null) => {
-  if (!r) return <></>;
+const handleClick: MouseEventHandler = (e) => {
+  const id = (e.target as HTMLElement).id;
+  if (!id) return;
+  console.log(id);
+};
+
+const ImageGallery = (r: AppState) => {
   return (
-    <>
-      <ul className="ImageGallery">
-        {r.hits.map((p) => (
-          <ImageGalleryItem {...p} key={p.id} />
-        ))}
-      </ul>
-      {r.page < r.pageCount && <Loader />}
-    </>
+    <ul className="ImageGallery" onClick={handleClick}>
+      {r.hits.map((p, i) => (
+        <ImageGalleryItem {...p} key={i} />
+      ))}
+    </ul>
   );
 };
 

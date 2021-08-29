@@ -1,12 +1,13 @@
-import React from "react";
+import { Component, ChangeEventHandler, FormEventHandler } from "react";
+import "./SearchBar.css";
 
-class SearchBar extends React.Component<{ onSubmit: (value: string) => void }> {
+class SearchBar extends Component<{ onSubmit: (value: string) => void }> {
   state = { value: "" };
-  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     this.setState({ value: e.currentTarget.value });
   };
 
-  handleSubmit = (e: React.FormEvent) => {
+  handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     this.props.onSubmit(this.state.value);
   };
