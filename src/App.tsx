@@ -27,7 +27,7 @@ class App extends Component<{}, AppState> {
     loading: false,
     modalIndex: -1,
   };
-  allowScroll = false;
+  allowScroll = true;
 
   componentDidMount() {
     document.addEventListener("keydown", (e) => {
@@ -44,7 +44,6 @@ class App extends Component<{}, AppState> {
       data.page = 1;
       data.pageCount = Math.ceil(data.total / pixabay.per_page);
       data.loading = false;
-      this.allowScroll = true;
       this.setState(data);
     } catch (error) {
       this.handleError(error as Error);
@@ -54,6 +53,7 @@ class App extends Component<{}, AppState> {
   handleGalleryClick: MouseEventHandler = (e) => {
     const li = (e.target as HTMLElement).closest("li");
     if (!li) return;
+    this.allowScroll = false;
     this.setState({ modalIndex: Number(li.dataset.index) });
   };
 
@@ -67,7 +67,6 @@ class App extends Component<{}, AppState> {
       )) as AppState;
       currentState.hits.push(...data.hits);
       currentState.loading = false;
-      this.allowScroll = true;
       this.setState(currentState);
     } catch (error) {
       this.handleError(error as Error);
@@ -75,6 +74,7 @@ class App extends Component<{}, AppState> {
   };
 
   handleModalClose = () => {
+    this.allowScroll = false;
     this.setState({ modalIndex: -1 });
   };
 
@@ -84,18 +84,21 @@ class App extends Component<{}, AppState> {
   }
 
   componentDidUpdate() {
-    if (!this.allowScroll) return;
+    if (!this.allowScroll) {
+      this.allowScroll = true;
+      return;
+    }
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
-    this.allowScroll = false;
   }
 
   render() {
     return (
       <>
         <SearchBar onSubmit={this.handleSubmit} />
+        {this.state.query && !this.state.pageCount && <p>Nothing found.</p>}
         <ImageGallery {...this.state} onClick={this.handleGalleryClick} />
         {this.state.loading && (
           <Loader type="Oval" color="#4354b0" width="50px" height="50px" />
